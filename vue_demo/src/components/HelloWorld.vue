@@ -1,42 +1,62 @@
- <template>
+  <template>
   <div class="hello">
     <h3>{{ msg }}</h3>
+    <h4>{{ des }}</h4>
     <ul>
-      <li></li>
+      <li v-for="(item, index) in list" :key="index">{{ item }}</li>
     </ul>
   </div>
 </template>
 
 <script>
-const fetchList = (time, data) => new Promise(resolve => {
-  setTimeout(resolve, time, data.split(''))
-})
 // import { toRefs } from 'vue'
+import { toRefs, computed, toRef } from 'vue'
+import useGetList from './list'
 export default {
   name: 'HelloWorld',
   props: {
-    msg: String
+    msg: String,
+    title: String
+  },
+  setup(props, context) {
+    console.log(context, 'context>>>>')
+    console.log(context.attrs, 'attrs')
+    // 如果使用结构的方式获取props中的数据,需要引入toRefs
+    const { msg } = toRefs(props)
+
+    // 如果title是可选的prop,roRefs将不会为title创建一个ref,需要用toRef替代他
+    const title = toRef(props, 'title')
+
+    console.log(title.value, 'title>>>')
+
+    const { list, getList } = useGetList(msg)
+
+    // 计算属性
+    const des = computed(() => {
+      return msg.value + ' Vue3.0'
+    })
+    return {
+      list,
+      getList,
+      des
+    }
   },
   beforeCreate() {
     console.log(this, 'beforeCreate')
   },
   created() {
     console.log(this, 'created')
-    this.getList()
+    // this.getList()
     // console.log(this.list)
   },
-  setup(props) {
-    console.log(this)
-    let list = []
-    const getList = async () => {
-      list = await fetchList(2000, props.msg)
-      console.log(list, 'list>>>')
-    }
-    return {
-      list,
-      getList
-    }
-  }
+  // watch: {
+  //   msg: {
+  //     handler: function(value) {
+  //       console.log(value)
+  //     },
+  //     immediate: true
+  //   }
+  // }
 }
 </script>
 

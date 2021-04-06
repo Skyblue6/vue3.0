@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <h1>Vue3.0</h1>
-
+    <input type="text" v-model="msg">
     <HelloWorld :msg="msg"/>
 
   </div>
